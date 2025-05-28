@@ -1,0 +1,204 @@
+package Demo;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+public class OrangeHRM {
+
+    WebDriver driver;
+    String baseUrl = "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login";
+
+    @BeforeTest
+    public void setup() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.get(baseUrl);
+    }
+
+    @Test
+    public void addAndVerifyEmployees() throws InterruptedException {
+        // 1. Login
+        driver.findElement(By.xpath("//input[@placeholder='Username']")).sendKeys("Admin");
+        driver.findElement(By.xpath("//input[@placeholder='Password']")).sendKeys("admin123");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+        // 2. Hover over PIM and click
+        Actions actions = new Actions(driver);
+        WebElement pimMenu = driver.findElement(By.xpath("//span[text()='PIM']"));
+        actions.moveToElement(pimMenu).click().perform();
+
+        // 3. Add multiple employees
+        String[][] employees = {
+            {"John", "Doe"},
+            {"Jane", "Smith"},
+            {"Alice", "Johnson"},
+            {"Bob", "Williams"}
+        };
+
+        for (String[] emp : employees) {
+            driver.findElement(By.xpath("//a[text()='Add Employee']")).click();
+
+            driver.findElement(By.xpath("//input[@placeholder='First Name']")).clear();
+            driver.findElement(By.xpath("//input[@placeholder='First Name']")).sendKeys(emp[0]);
+
+            driver.findElement(By.xpath("//input[@placeholder='Last Name']")).clear();
+            driver.findElement(By.xpath("//input[@placeholder='Last Name']")).sendKeys(emp[1]);
+
+            driver.findElement(By.xpath("//button[normalize-space()='Save']")).click();
+            Thread.sleep(2000); // wait for save to complete
+
+            // Back to PIM main page
+            pimMenu = driver.findElement(By.xpath("//span[text()='PIM']"));
+            pimMenu.click();
+            Thread.sleep(1000);
+        }
+
+        // 4. Go to Employee List and verify names
+        driver.findElement(By.xpath("//a[text()='Employee List']")).click();
+        Thread.sleep(2000);
+
+        boolean allVerified = true;
+
+        for (String[] emp : employees) {
+            List<WebElement> empNames = driver.findElements(By.xpath("//div[@role='row']//div[3]")); 
+            // Adjust XPath to target name column correctly, may vary based on site
+
+            boolean found = false;
+            for (WebElement nameElement : empNames) {
+                String fullName = nameElement.getText();
+                if (fullName.contains(emp[0]) && fullName.contains(emp[1])) {
+                    System.out.println("Name Verified: " + fullName);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                System.out.println("Employee not found: " + emp[0] + " " + emp[1]);
+                allVerified = false;
+            }
+        }
+
+        Assert.assertTrue(allVerified, "Not all employees were found in the Employee List.");
+
+        // 5. Logout
+        driver.findElement(By.xpath("//p[@class='oxd-userdropdown-name']")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.xpath("//a[text()='Logout']")).click();
+    }
+
+    @AfterTest
+    public void tearDown() {
+        driver.quit();
+    }
+}
+package Demo;
+
+import java.time.Duration;
+import java.util.List;
+
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.interactions.Actions;
+import org.testng.Assert;
+import org.testng.annotations.*;
+
+public class OrangeHRM {
+
+    WebDriver driver;
+    String baseUrl = "https://opensource-demo.orangehrmlive.com/web/index.php/auth/login";
+
+    @BeforeTest
+    public void setup() {
+        driver = new ChromeDriver();
+        driver.manage().window().maximize();
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(10));
+        driver.get(baseUrl);
+    }
+
+    @Test
+    public void addAndVerifyEmployees() throws InterruptedException {
+        // 1. Login
+        driver.findElement(By.xpath("//input[@placeholder='Username']")).sendKeys("Admin");
+        driver.findElement(By.xpath("//input[@placeholder='Password']")).sendKeys("admin123");
+        driver.findElement(By.xpath("//button[@type='submit']")).click();
+
+        // 2. Hover over PIM and click
+        Actions actions = new Actions(driver);
+        WebElement pimMenu = driver.findElement(By.xpath("//span[text()='PIM']"));
+        actions.moveToElement(pimMenu).click().perform();
+
+        // 3. Add multiple employees
+        String[][] employees = {
+            {"John", "Doe"},
+            {"Jane", "Smith"},
+            {"Alice", "Johnson"},
+            {"Bob", "Williams"}
+        };
+
+        for (String[] emp : employees) {
+            driver.findElement(By.xpath("//a[text()='Add Employee']")).click();
+
+            driver.findElement(By.xpath("//input[@placeholder='First Name']")).clear();
+            driver.findElement(By.xpath("//input[@placeholder='First Name']")).sendKeys(emp[0]);
+
+            driver.findElement(By.xpath("//input[@placeholder='Last Name']")).clear();
+            driver.findElement(By.xpath("//input[@placeholder='Last Name']")).sendKeys(emp[1]);
+
+            driver.findElement(By.xpath("//button[normalize-space()='Save']")).click();
+            Thread.sleep(2000); // wait for save to complete
+
+            // Back to PIM main page
+            pimMenu = driver.findElement(By.xpath("//span[text()='PIM']"));
+            pimMenu.click();
+            Thread.sleep(1000);
+        }
+
+        // 4. Go to Employee List and verify names
+        driver.findElement(By.xpath("//a[text()='Employee List']")).click();
+        Thread.sleep(2000);
+
+        boolean allVerified = true;
+
+        for (String[] emp : employees) {
+            List<WebElement> empNames = driver.findElements(By.xpath("//div[@role='row']//div[3]")); 
+            // Adjust XPath to target name column correctly, may vary based on site
+
+            boolean found = false;
+            for (WebElement nameElement : empNames) {
+                String fullName = nameElement.getText();
+                if (fullName.contains(emp[0]) && fullName.contains(emp[1])) {
+                    System.out.println("Name Verified: " + fullName);
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                System.out.println("Employee not found: " + emp[0] + " " + emp[1]);
+                allVerified = false;
+            }
+        }
+
+        Assert.assertTrue(allVerified, "Not all employees were found in the Employee List.");
+
+        // 5. Logout
+        driver.findElement(By.xpath("//p[@class='oxd-userdropdown-name']")).click();
+        Thread.sleep(1000);
+        driver.findElement(By.xpath("//a[text()='Logout']")).click();
+    }
+
+    @AfterTest
+    public void tearDown() {
+        driver.quit();
+    }
+}
